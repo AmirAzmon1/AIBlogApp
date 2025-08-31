@@ -1,7 +1,32 @@
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 function CharactersPage({ characters }) {
+  const router = useRouter();
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDelete = async (characterId) => {
+    if (!confirm('Are you sure you want to delete this character?')) return;
+    
+    setDeletingId(characterId);
+    try {
+      const response = await fetch(`/api/characters/${characterId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        router.reload();
+      } else {
+        alert('Failed to delete character');
+      }
+    } catch (error) {
+      alert('Error deleting character');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -15,8 +40,18 @@ function CharactersPage({ characters }) {
         <ul className="grid gap-4 md:grid-cols-2">
           {characters.map((c) => (
             <li key={c._id} className="rounded-xl border bg-white p-4 shadow-sm">
-              <h3 className="font-medium">{c.name}</h3>
-              <p className="text-sm text-gray-600">{c.description}</p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-medium">{c.name}</h3>
+                  <p className="text-sm text-gray-600">{c.description}</p>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <Link href={`/characters/${c._id}`} className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-white text-sm hover:bg-blue-700">View</Link>
+                  <button onClick={() => handleDelete(c._id)} disabled={deletingId === c._id} className="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-white text-sm hover:bg-red-700 disabled:opacity-50">
+                    {deletingId === c._id ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
