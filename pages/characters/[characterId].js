@@ -15,7 +15,7 @@ function CharacterDetailPage({ character }) {
   // מניעת hydration errors
   useEffect(() => {
     setMounted(true);
-    
+    setChatHistory([]); 
     // Load chat history from localStorage
     const savedChat = localStorage.getItem(`chat_${character.id}`);
     if (savedChat) {
@@ -235,7 +235,7 @@ function CharacterDetailPage({ character }) {
             {/* Enhanced Chat History */}
             <div className="h-80 overflow-y-auto mb-4 border rounded-lg p-4 bg-gradient-to-b from-gray-50 to-white">
               {chatHistory.length === 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-4" >
                   <div className="text-center py-6">
                     <div className="text-4xl mb-2">👋</div>
                     <p className="text-gray-500 text-sm">
@@ -272,11 +272,11 @@ function CharacterDetailPage({ character }) {
                           ? 'bg-purple-600 text-white rounded-bl-md'
                           : 'bg-gray-400 text-white rounded-bl-md'
                       }`}>
-                        <div className="mb-1">
+                        {/* <div className="mb-1">
                           {msg.role === 'user' && '👤 You'}
                           {msg.role === 'character' && `🎭 ${character.name}`}
                           {msg.role === 'system' && '⚠️ System'}
-                        </div>
+                        </div> */}
                         <div className="leading-relaxed">{msg.content}</div>
                         <div className={`text-xs mt-2 opacity-70 ${
                           msg.role === 'user' ? 'text-blue-100' : 'text-purple-100'
